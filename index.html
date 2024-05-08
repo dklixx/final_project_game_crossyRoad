@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/99/three.min.js"></script> 
+    <!-- подключение файла three.min.js для использования функционала и инструментов библиотеки three.js  -->
+    <link rel="stylesheet" href="style.css">
+    <title>CROSSY ROAD</title>
+    
+</head>
+<body>
+    <div id="counter">0</div>
+    
+<div id="controlls">
+  <div>
+    <button id="forward">↑</button>
+    <button id="left">←</button>
+    <button id="backward">↓</button>
+    <button id="right">→</button>
+  </div>
+</div>
+
+<div id="end">
+  <button id="retry">Retry</button>
+</div>
+
+<script>
+    
+const counterDOM = document.getElementById('counter');  
+const endDOM = document.getElementById('end');  
+
+const scene = new THREE.Scene();
+
+const distance = 500;
+const camera = new THREE.OrthographicCamera( window.innerWidth/-2, window.innerWidth/2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 10000 );
+
+</script>
+</body>
+</html>
+
