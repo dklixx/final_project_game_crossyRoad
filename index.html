@@ -471,6 +471,7 @@ window.addEventListener("keydown", event => {
     }
 });
 
+
 function move(direction) {
     const finalPositions = moves.reduce((position,move) => {
         if(move === 'forward') return {lane: position.lane+1, column: position.column};
