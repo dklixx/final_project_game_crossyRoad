@@ -384,50 +384,55 @@ function Lane(index) { //lane - исп для создания объектов-
     //два типа: если index меньше или =0, то дорожки уст как field. дорожка представляет собой поле или область вне трассы
     //в др случае дорожки выбирна рандом из массива lanetypes
 
-    switch(this.type) { 
-        case 'field': {
-            this.type = 'field';
-            this.mesh = new Grass();
-            break;
+    switch(this.type) { //начало конструкции, которая проверяет значение свойства type
+        case 'field': { //если тип дорожки field, выполн след блок кода
+            this.type = 'field'; //уст тип дорожки field
+            this.mesh = new Grass(); //созд новый объект grass и присваивает его свойству mesh
+            break; //завершение 
         }
-        case 'forest': {
-            this.mesh = new Grass();
+        case 'forest': { //если тип дорожки forest, то выполняется следующее
+            this.mesh = new Grass(); // //созд новый объект grass и присваивает его свойству mesh
             
-            this.occupiedPositions = new Set();
-            this.threes = [1,2,3,4].map(() => {
-                const three = new Three();
+            this.occupiedPositions = new Set(); 
+            this.threes = [1,2,3,4].map(() => { //создает пустой набор для хранения занятых позиций и сасив для хранения деревьев
+                const three = new Three(); //созд новый объект 
                 let position;
                 do {
                     position = Math.floor(Math.random()*columns);
-                }while(this.occupiedPositions.has(position))
-                this.occupiedPositions.add(position);
-                three.position.x = (position*positionWidth+positionWidth/2)*zoom-boardWidth*zoom/2;
-                this.mesh.add( three );
-                return three;
+                }while(this.occupiedPositions.has(position)) //генерирует случайную позицию для дерева в пределах колонок (учитывая занятые позиции)
+                this.occupiedPositions.add(position); //добавление в набор occupiedPositions, чтоб не повторялось развещение 
+                three.position.x = (position*positionWidth+positionWidth/2)*zoom-boardWidth*zoom/2; //Устанавливает позицию дерева в соответствии с сгенерированной позицией                this.mesh.add( three );
+                return three; //возвращает объект дерева и завершает текущую итерацию функции map 
             })
-            break;
+            break; //завершение и выход из switch
         }
-        case 'car' : {
-            this.mesh = new Road();
-            this.direction = Math.random() >= 0.5;
+        case 'car' : {//если тип дорожки car, то выполняется следующее
+            this.mesh = new Road(); //созд новый объект дороги
+            this.direction = Math.random() >= 0.5; //генерирует случ булевое значение для опред направления движения на дороге
             
-            const occupiedPositions = new Set();
-            this.vechicles = [1,2,3].map(() => {
-                const vechicle = new Car();
+            const occupiedPositions = new Set(); //созд пуст набор для хранения занятых позиций на дороге 
+            this.vechicles = [1,2,3].map(() => { 
+                const vechicle = new Car(); //созд новый объект машину 
                 let position;
                 do {
                     position = Math.floor(Math.random()*columns/2);
-                }while(occupiedPositions.has(position))
-                occupiedPositions.add(position);
-                vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
-                if(!this.direction) vechicle.rotation.z = Math.PI;
-                this.mesh.add( vechicle );
-                return vechicle;
+                }while(occupiedPositions.has(position)) //генерирует случайную позицию для машины в пределах колонок (учитывая занятые позиции)
+                occupiedPositions.add(position); //добавление
+                vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2; //уст позицию машины на дороге в соот с сгенерированной позицией
+                if(!this.direction) vechicle.rotation.z = Math.PI; //если направление движения автомобиля не вправо (т.е. влево), устанавливает угол поворота автомобиля на 180 градусов, чтобы он двигался в противоположном направлении
+                this.mesh.add( vechicle );//доавление к объекту road
+                return vechicle; // возвращение машину и завершает итерацию 
             })
 
-            this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
-            break;
+            this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)]; 
+            //Math.random() генерирует случайное число, laneSpeeds.length возвращает количество элементов в массиве laneSpeeds,Math.floor() округляет полученное случайное число,
+            //laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)] выбирает случайный элемент из массива laneSpeeds,
+            //Затем выбранная скорость присваивается свойству speed текущего объекта-дорожки
+
+            break; //завершение 
         }
+
+        //аналогичная ситуация 
         case 'truck' : {
             this.mesh = new Road();
             this.direction = Math.random() >= 0.5;
@@ -452,10 +457,10 @@ function Lane(index) { //lane - исп для создания объектов-
     }
 }
 
-document.querySelector("#retry").addEventListener("click", () => {
-    lanes.forEach(lane => scene.remove( lane.mesh ));
-    initaliseValues();
-    endDOM.style.visibility = 'hidden';
+document.querySelector("#retry").addEventListener("click", () => { //находит элемент в документе с айди retry, добавляет слушатель, когд апроисходит клик 
+    lanes.forEach(lane => scene.remove( lane.mesh )); //перебирает каждый элемент массива lanes, удаляет каждый объект-дорожку из сцены scene, вызывая метод remove для меша (mesh), который представляет дорожку
+    initaliseValues(); //вызывает функци, которая инициализирует значения для начала новой игры 
+    endDOM.style.visibility = 'hidden'; //скрывает элемент, котооый показывает сообщение retry 
 });
 
 document.getElementById('forward').addEventListener("click", () => move('forward'));
@@ -465,6 +470,7 @@ document.getElementById('backward').addEventListener("click", () => move('backwa
 document.getElementById('left').addEventListener("click", () => move('left'));
 
 document.getElementById('right').addEventListener("click", () => move('right'));
+//находит по айди кнопки-стрелочки, взаимодействие клика на стрелочки в соответствии с нужными сторонами 
 
 window.addEventListener("keydown", event => {
     if (event.keyCode == '38') {
@@ -483,22 +489,26 @@ window.addEventListener("keydown", event => {
        // right arrow
        move('right');
     }
-});
+}); //тоже самое, только для клавиатуры 
 
 
 function move(direction) {
-    const finalPositions = moves.reduce((position,move) => {
-        if(move === 'forward') return {lane: position.lane+1, column: position.column};
-        if(move === 'backward') return {lane: position.lane-1, column: position.column};
-        if(move === 'left') return {lane: position.lane, column: position.column-1};
-        if(move === 'right') return {lane: position.lane, column: position.column+1};
+    const finalPositions = moves.reduce((position,move) => { //вычис окончательные позиции, куда должен переместиться объект 
+        if(move === 'forward') return {lane: position.lane+1, column: position.column}; //перемещение вперед на одну дорожку
+        if(move === 'backward') return {lane: position.lane-1, column: position.column}; //перемещение назад на одну дорожку 
+        if(move === 'left') return {lane: position.lane, column: position.column-1}; //влево 
+        if(move === 'right') return {lane: position.lane, column: position.column+1}; //вправо
     }, {lane: currentLane, column: currentColumn})
 
-    if (direction === 'forward') {
-        if(lanes[finalPositions.lane+1].type === 'forest' && lanes[finalPositions.lane+1].occupiedPositions.has(finalPositions.column)) return;
-        if(!stepStartTimestamp) startMoving = true;
-        addLane();
+    //проверка в какую сторону было перемещение 
+    if (direction === 'forward') { //если вперед 
+        if(lanes[finalPositions.lane+1].type === 'forest' && lanes[finalPositions.lane+1].occupiedPositions.has(finalPositions.column)) return; //проверка, если след дорожка лес и след позиция занята, останавливаемся
+        if(!stepStartTimestamp) startMoving = true; //если это первое движение, начинаем движение
+        addLane(); //доб новую дорожку 
     }
+
+    //аналогичные действия с остальными сторонами 
+    
     else if (direction === 'backward') {
         if(finalPositions.lane === 0) return;
         if(lanes[finalPositions.lane-1].type === 'forest' && lanes[finalPositions.lane-1].occupiedPositions.has(finalPositions.column)) return;
