@@ -508,7 +508,7 @@ function move(direction) {
     }
 
     //аналогичные действия с остальными сторонами 
-    
+
     else if (direction === 'backward') {
         if(finalPositions.lane === 0) return;
         if(lanes[finalPositions.lane-1].type === 'forest' && lanes[finalPositions.lane-1].occupiedPositions.has(finalPositions.column)) return;
@@ -524,47 +524,49 @@ function move(direction) {
        if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column+1)) return;
        if(!stepStartTimestamp) startMoving = true;
     }
-    moves.push(direction);
+    moves.push(direction); //добавляем направление движения в массив ходов 
 }
 
 function animate(timestamp) {
-    requestAnimationFrame( animate );
+    requestAnimationFrame( animate ); //запрашиваем след кадр анимации
     
-    if(!previousTimestamp) previousTimestamp = timestamp;
-    const delta = timestamp - previousTimestamp;
-    previousTimestamp = timestamp;
+    if(!previousTimestamp) previousTimestamp = timestamp; //если пред времени нет, то уст текущее как предыдущее
+    const delta = timestamp - previousTimestamp; //вычисляем разницу времени между текущим и предыдущим кадрами
+    previousTimestamp = timestamp; // Обновляем предыдущее время до текущего
   
     
-    lanes.forEach(lane => {
-        if(lane.type === 'car' || lane.type === 'truck') {
+    lanes.forEach(lane => { //проходимся по всем дорожкам 
+        if(lane.type === 'car' || lane.type === 'truck') { //если тип дорожки car или truck
             const aBitBeforeTheBeginingOfLane = -boardWidth*zoom/2 - positionWidth*2*zoom;
-            const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom;
-            lane.vechicles.forEach(vechicle => {
-                if(lane.direction) {
-                    vechicle.position.x = vechicle.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : vechicle.position.x -= lane.speed/16*delta;
+            const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom; // вычисляем границы передней и задней части дорожки для движущихся объектов
+            lane.vechicles.forEach(vechicle => { // проходимся по всем объектам на дорожке
+                if(lane.direction) {  // Если движение по направлению движения дорожки
+                    vechicle.position.x = vechicle.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : vechicle.position.x -= lane.speed/16*delta;// Если объект вышел за пределы дорожки, перемещаем его в начало  
                 }else{
-                    vechicle.position.x = vechicle.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : vechicle.position.x += lane.speed/16*delta;
+                    vechicle.position.x = vechicle.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : vechicle.position.x += lane.speed/16*delta; // Если объект вышел за пределы дорожки, перемещаем его в начало
                 }
             });
         }
     });
 
-    if(startMoving) {
-        stepStartTimestamp = timestamp;
-        startMoving = false;
+    if(startMoving) {//если началось движение 
+        stepStartTimestamp = timestamp; //запоминаем тек время как начало 
+        startMoving = false; //начало движения 
     }
 
-    if(stepStartTimestamp) {
-        const moveDeltaTime = timestamp - stepStartTimestamp;
-        const moveDeltaDistance = Math.min(moveDeltaTime/stepTime,1)*positionWidth*zoom;
-        const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime/stepTime,1)*Math.PI)*8*zoom;
+    if(stepStartTimestamp) { //если есть запись о начале шага 
+        const moveDeltaTime = timestamp - stepStartTimestamp; //вычисляем время прошедшее с начала шага 
+        const moveDeltaDistance = Math.min(moveDeltaTime/stepTime,1)*positionWidth*zoom; //расстрояние вычисляем пройденное за это время 
+        const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime/stepTime,1)*Math.PI)*8*zoom; //вычис расст для прыжка 
         switch(moves[0]) {
-            case 'forward': {
-                camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom + moveDeltaDistance;        
-                chicken.position.y = currentLane*positionWidth*zoom + moveDeltaDistance; // initial chicken position is 0
-                chicken.position.z = jumpDeltaDistance;
+            case 'forward': { //если движение вперед 
+                camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom + moveDeltaDistance;    //перемещение камеры вверх      
+                chicken.position.y = currentLane*positionWidth*zoom + moveDeltaDistance; //перемещаем курицу вверх 
+                chicken.position.z = jumpDeltaDistance; //применяем эффект прыжка к курице 
                 break;
             }
+
+            // аналогично с предыдущими строками 
             case 'backward': {
                 camera.position.y = initialCameraPositionY + currentLane*positionWidth*zoom - moveDeltaDistance;
                 chicken.position.y = currentLane*positionWidth*zoom - moveDeltaDistance;
@@ -585,13 +587,14 @@ function animate(timestamp) {
             }
         }
        
-        if(moveDeltaTime > stepTime) {
+        if(moveDeltaTime > stepTime) { //если прошло дост времени шага 
             switch(moves[0]) {
-                case 'forward': {
-                    currentLane++;
-                    counterDOM.innerHTML = currentLane;    
+                case 'forward': { //если шаг был вперед 
+                    currentLane++; //увиличиваем текущую дорожку 
+                    counterDOM.innerHTML = currentLane; //обновляем отображение текущей дорожки на экране 
                     break;
                 }
+                //аналогичные вычисления 
                 case 'backward': {
                     currentLane--;
                     counterDOM.innerHTML = currentLane;    
@@ -606,30 +609,34 @@ function animate(timestamp) {
                     break;
                 }
             }
-            moves.shift();
+            moves.shift(); //удаляем завершенный шаг из массивов шагов 
            
-            stepStartTimestamp = moves.length === 0 ? null : timestamp;
+            stepStartTimestamp = moves.length === 0 ? null : timestamp; //устанавливаем время начала след шага, если есть еще невыполненные шаги 
         }
     }
 
     
     if(lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck') {
+          // Проверяем, находится ли курица на дороге с автомобилями или грузовиками
         const chickenMinX = chicken.position.x - chickenSize*zoom/2;
         const chickenMaxX = chicken.position.x + chickenSize*zoom/2;
         const vechicleLength = { car: 60, truck: 105}[lanes[currentLane].type]; 
         lanes[currentLane].vechicles.forEach(vechicle => {
+             // Проверяем каждый автомобиль или грузовик на текущей дороге
             const carMinX = vechicle.position.x - vechicleLength*zoom/2;
             const carMaxX = vechicle.position.x + vechicleLength*zoom/2;
+             // Проверяем, пересекается ли позиция курицы с позицией автомобиля или грузовика
             if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
+                  // Если есть пересечение, показываем экран конца игры
                 endDOM.style.visibility = 'visible';
             }
         });
     
     }
-    renderer.render( scene, camera );	
+    renderer.render( scene, camera );	// Рендерим сцену
 }
 
-requestAnimationFrame( animate );
+requestAnimationFrame( animate ); //запускаем анимацию
 
 </script>
 </body>
