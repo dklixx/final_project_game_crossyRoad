@@ -155,26 +155,27 @@ backLight.castShadow = true; // свет будет бросать тени на
 scene.add(backLight) //добавление на сцену
 
 function Texture(width, height, rects) {
-    const canvas = document.createElement( "canvas" );
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext( "2d" );
-    context.fillStyle = "#ffffff";
-    context.fillRect( 0, 0, width, height );
-    context.fillStyle = "rgba(0,0,0,0.6)";  
+    const canvas = document.createElement( "canvas" ); //исп для рисования текстуры 
+    canvas.width = width; //уст ширина 
+    canvas.height = height; //уст высота 
+    const context = canvas.getContext( "2d" ); //контекст ривования 2d
+    context.fillStyle = "#ffffff"; //заполняем белым цветом фон для текстуры
+    context.fillRect( 0, 0, width, height ); 
+    context.fillStyle = "rgba(0,0,0,0.6)"; //цвет заливки для рисования фигур (полупрозрачный черный)
     rects.forEach(rect => {
       context.fillRect(rect.x, rect.y, rect.w, rect.h);
-    });
-    return new THREE.CanvasTexture(canvas);
+    }); //позволяет создавать на текстуре разные фигуры и области
+    return new THREE.CanvasTexture(canvas); //используем для применения созданной текстуры к объектам на сцене
 }
 
 function Wheel() {
-    const wheel = new THREE.Mesh( 
-      new THREE.BoxBufferGeometry( 12*zoom, 33*zoom, 12*zoom ), 
-      new THREE.MeshLambertMaterial( { color: 0x333333, flatShading: true } ) 
+    const wheel = new THREE.Mesh( //новый объект колеса, передаем два аргумента 
+      new THREE.BoxBufferGeometry( 12*zoom, 33*zoom, 12*zoom ), //форма колеса (прямоугольный параллелепипед), первое значение - ширина, второй - высота, третий - глубина. зум для масштабирования размеров колеса 
+      new THREE.MeshLambertMaterial( { color: 0x333333, flatShading: true } ) //материал колеса, цвет (серый), плоские тени 
+      
     );
-    wheel.position.z = 6*zoom;
-    return wheel;
+    wheel.position.z = 6*zoom; //глубина расположения колеса, зум для корректировки масштаба позиции в зависимости от общего масштаба сцены
+    return wheel; //возвращ созд объект колеса, чтоб можно было использовать в других частях программы
 }
 
 function Car() {
