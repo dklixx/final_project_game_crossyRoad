@@ -225,6 +225,8 @@ function Car() { //функция для машины
   return car; //возвращение для использования в других частях программы 
 }
 
+//далее идут идентичные функции (до 378 строчки)
+
 function Truck() {
     const truck = new THREE.Group();
     const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
@@ -376,11 +378,13 @@ function Grass() {
     return grass;
 }
 
-function Lane(index) {
-    this.index = index;
-    this.type = index <= 0 ? 'field' : laneTypes[Math.floor(Math.random()*laneTypes.length)];
+function Lane(index) { //lane - исп для создания объектов-дорожек в игре 
+    this.index = index; //порядковый номер дорожки 
+    this.type = index <= 0 ? 'field' : laneTypes[Math.floor(Math.random()*laneTypes.length)]; //уст свойство type создаваемого объекта-дорожки
+    //два типа: если index меньше или =0, то дорожки уст как field. дорожка представляет собой поле или область вне трассы
+    //в др случае дорожки выбирна рандом из массива lanetypes
 
-    switch(this.type) {
+    switch(this.type) { 
         case 'field': {
             this.type = 'field';
             this.mesh = new Grass();
