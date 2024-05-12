@@ -178,18 +178,18 @@ function Wheel() {
     return wheel; //возвращ созд объект колеса, чтоб можно было использовать в других частях программы
 }
 
-function Car() {
-  const car = new THREE.Group();
-  const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+function Car() { //функция для машины 
+  const car = new THREE.Group(); //созд пустая группа car. используется для объединения нескльких объектов в один комплексный объект 
+  const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)]; //случайный цвет для машины из массива vechicleColors. переменная color будет содерж выбранный цвет 
   
-  const main = new THREE.Mesh(
-    new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 15*zoom ), 
-    new THREE.MeshPhongMaterial( { color, flatShading: true } )
+  const main = new THREE.Mesh( //создосновная часть машины с помощью  класса THREE.Mesh, который представляет собой сетку (mesh) объекта
+    new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 15*zoom ), //определяет геометрию (форму) основной части машины. Здесь используется BoxBufferGeometry, что означает прямоугольный параллелепипед. Первый аргумент (60zoom) указывает ширину, второй (30zoom) - высоту, а третий (15*zoom) - глубину основной части машины. Параметр zoom используется для масштабирования размеров
+    new THREE.MeshPhongMaterial( { color, flatShading: true } ) //материал, плоские тени и цвет 
   );
-  main.position.z = 12*zoom;
-  main.castShadow = true;
-  main.receiveShadow = true;
-  car.add(main)
+  main.position.z = 12*zoom; //задает глубину, на которой будет размещена основная часть машины
+  main.castShadow = true; //позволяет машине бросать тени на другие объекты сцены
+  main.receiveShadow = true; //позволяет машине принимать тени от других объектов сцены
+  car.add(main) //добавление основной части машины к группе car 
   
   const cabin = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 33*zoom, 24*zoom, 12*zoom ), 
@@ -197,29 +197,32 @@ function Car() {
       new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carBackTexture } ),
       new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carFrontTexture } ),
       new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carRightSideTexture } ),
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carLeftSideTexture } ),
+      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carLeftSideTexture } ), //выше расписаны идентичные функции
       new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true } ), // top
       new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true } ) // bottom
     ]
   );
   cabin.position.x = 6*zoom;
   cabin.position.z = 25.5*zoom;
-  cabin.castShadow = true;
+  //устанавливаем позиции кабины машины в пространстве по осям x z 
+  cabin.castShadow = true; 
   cabin.receiveShadow = true;
-  car.add( cabin );
+  //позволяет бросать и принимать тени на другие объекты сцены 
+  car.add( cabin ); //добавление 
   
-  const frontWheel = new Wheel();
-  frontWheel.position.x = -18*zoom;
-  car.add( frontWheel );
+  const frontWheel = new Wheel(); //создаем колеса с помощью функции whell
+  frontWheel.position.x = -18*zoom; //определяем расположение колес относительно кабины машины
+  car.add( frontWheel ); //добавление
 
-  const backWheel = new Wheel();
-  backWheel.position.x = 18*zoom;
-  car.add( backWheel );
+  const backWheel = new Wheel(); //создаем колеса с помощью функции whell
+  backWheel.position.x = 18*zoom; //определяем расположение колес относительно кабины машины
+  car.add( backWheel ); //добавление 
 
   car.castShadow = true;
   car.receiveShadow = false;
+  //бросание и принятие теней 
   
-  return car;  
+  return car; //возвращение для использования в других частях программы 
 }
 
 function Truck() {
